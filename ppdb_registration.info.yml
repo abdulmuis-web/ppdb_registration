@@ -1,0 +1,8 @@
+name: 'PPDB Registration'
+type: module
+description: 'Manage registration form for PPDB'
+core: 8.x
+package: 'PPDB'
+dependencies:
+#  - profile_reg_path
+#  - profile

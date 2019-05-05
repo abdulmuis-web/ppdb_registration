@@ -1,0 +1,14 @@
+{
+  "name": "drupal/ppdb_registration",
+  "type": "drupal-module",
+  "description": "Manage registration form for PPDB",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/ppdb_registration",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/ppdb_registration",
+    "source": "http://cgit.drupalcode.org/ppdb_registration"
+  },
+  "require": { }
+}

@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Contains ppdb_registration.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+
+/**
+ * Implements hook_help().
+ */
+function ppdb_registration_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ppdb_registration module.
+    case 'help.page.ppdb_registration':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Manage registration form for PPDB') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ppdb_registration_theme() {
+  return [
+    'ppdb_registration' => [
+      'render element' => 'children',
+    ],
+  ];
+}
+
+
+/**
+ * Implements hook_form_alter
+ */
+function ppdb_registration_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+    $current_path = \Drupal::service('path.current')->getPath();
+        //dpm($form_id); //user_register_form 
+		
+	//user_registration_type_siswa_form
+	//user_registration_type_admin_dindik_form
+	//user_registration_type_admin_sekolah_form
+
+	if($form_id == 'user_register_form'){
+	  if(($current_path == '/register/admin-dindik') || ($current_path == '/register/admin-sekolah') || ($current_path == '/register/siswa')){
+        $form['contact']['#access'] = FALSE;
+		$form['user_picture']['#access'] = FALSE;
+		
+		dpm($result);
+        dpm($form_id); //user_register_form 
+        dpm($form);
+        // /register/admin-dindik
+	  }
+	
+	}
+}
+
+function _validate_siswa(array &$form, FormStateInterface &$form_state){
+	$nama = $form_state->getValue('name');
+	$tgl_lahir = $form_state->getValue('field_tanggal_lahir')[0]['value']->format("d-m-Y");
+
+	$query = \Drupal::database()->select( 'data_akademik','d')
+	  ->fields('d')
+	  ->fields('u', array('name', 'mail'))
+	  ->range('0', '1')
+	  ->condition('d.nisn', $nama, '=')
+	  ->condition('d.tgl_lahir', $tgl_lahir, '=');
+    $query->leftjoin('users_field_data', 'u', 'd.nisn = u.name');
+	$ids = $query->execute()->fetchAll();
+	$id = reset($ids);
+	
+	//$form_state->setErrorByName('name',t('just test'));
+	
+	if(!$id){
+		$form_state->setErrorByName('name',t('NISN anda tidak terdaftar pada pada database, jika anda berasal dari luar Provinsi banten atau peserta Paket, silahkan gunakan form ini.'));
+	}
+}
